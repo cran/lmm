@@ -161,7 +161,7 @@ fmcmc.result <- fastmcmc.lmm(y,subj,pred,xcol,zcol,prior=prior,
    seed=2345,iter=5000)
 # 
 # Before doing this, make sure that a graphics device is active:
-library(ts)
+# library(ts)
 par(mfrow=c(2,1))
 #
 # there were problems with debian Linux; so add ylim
