@@ -29,7 +29,7 @@ minutes after administration. NA denotes a missing value.
 #                   ----------------------     ----------------------
 #                   Placebo   Low   High      Placebo   Low   High
 #   -----------------------------------------------------------------
-#   Subject 1          16     20     16           2     -6     -4       
+#   Subject 1          16     20     16          20     -6     -4       
 #           2          12     24     12          -6      4     -8
 #           3           8      8     26          -4      4      8
 #           4          20      8     NA          NA     20     -4
@@ -45,7 +45,7 @@ minutes after administration. NA denotes a missing value.
 # with a fixed effect for each column (occasion) and a random 
 # intercept for each subject. First we enter the data.
 #
-y <- c(16,20,16,2,-6,-4,
+y <- c(16,20,16,20,-6,-4,
     12,24,12,-6,4,-8,
     8,8,26,-4,4,8,
     20,8,20,-4,
