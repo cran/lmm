@@ -1,0 +1,134 @@
+****************************************************************************
+                                 lmm
+          Some improved procedures for linear mixed models
+                    Version for S-PLUS/Unix (2/98)
+****************************************************************************
+Description:
+
+The package contains S-PLUS functions for the methods described by
+Schafer (1998) for linear mixed models.
+
+The files included in this package are:
+
+README
+	this file
+
+lmm.s
+	contains S-PLUS code for creating seven functions
+
+lmm.f
+	Fortran-77 source code used by the seven functions
+
+example.s
+
+	File containing examples showing how the functions
+	may be used
+
+help files
+	seven S-PLUS help files: ecmeml.lmm, ecmerml.lmm,
+	fastmcmc.lmm, fastml.lmm, fastmode.lmm, fastrml.lmm,
+	mgibbs.lmm. These files are contained in a subdirectory
+	called "help".
+***********************************************************************
+Distribution:
+
+This package is distributed as a shar archive called:
+
+       lmmunix.sh
+
+Obtaining this file and typing
+
+       sh lmmunix.sh
+
+will unpack the archive and create a directory called "lmm". If you
+are reading this file, then you have probably already unpacked the
+archive.
+***********************************************************************
+Installation:
+
+After unpacking the archive, go into the "lmm" directory (you are
+probably there now) and do the following:
+
+(1) Compile the Fortran source code by typing
+
+	f77 -c -O lmm.f
+
+at the Unix prompt. This will create a file called "lmm.o" containing
+object code.
+
+(2) Move the seven help files from "help" into a subdirectory called
+".Help" of the ".Data" directory where the functions will reside. If
+".Data" and  ".Data/.Help" do not exist you will have to create them.
+For example, at the Unix prompt, type:
+
+	mkdir .Data
+	mkdir .Data/.Help
+	mv help/*.* .Data/.Help
+	rmdir help
+
+(3) Enter S-PLUS and type
+
+	source("lmm.s")
+
+to load the functions. Then load the Fortran object code by typing:
+
+	dyn.load("lmm.o")
+
+The last step, the dynamic loading of the Fortran code, needs to be
+carried out each time you enter S-PLUS and want to use these functions.
+You may want to store this last command in the ".First" function, so
+that the Fortran is automatically loaded and ready each time you enter
+S-PLUS. Consult the S-PLUS documentation about this.
+***********************************************************************
+Using the function:
+
+After installation, you will have your disposal a set of seven S-PLUS
+functions.  Brief descriptions of these functions are as follows. More
+complete descriptions of these functions are found in the help files
+which may be accessed through the S-PLUS help() function.
+
+ecmeml.lmm
+	ECME algorithm for maximum-likelihood (ML) estimation in
+	linear mixed models
+
+fastml.lmm
+	Rapidly converging algorithm for maximum-likelihood (ML)
+	estimation in linear mixed models
+
+ecmerml.lmm
+	ECME algorithm for restricted maximum-likelihood (RML)
+	estimation in linear mixed models
+
+fastrml.lmm
+	Rapidly converging algorithm for restricted maximum-likelihood
+	(RML) estimation in linear mixed models
+
+fastmode.lmm
+	Rapidly converging algorithm for calculating posterior modes
+	in linear mixed models
+
+mgibbs.lmm
+ 	Modified Gibbs sampler for Bayesian inference in linear mixed
+	models
+
+fastmcmc.lmm
+	Rapidly converging Markov chain Monte Carlo algorithm for
+	Bayesian inference in linear mixed models
+
+***********************************************************************
+Examples:
+
+The file "example.s" contains S-PLUS code and extensive comments
+showing how these functions can be used. 
+***********************************************************************
+Author:
+
+This code was written by Joe Schafer, Dept. of Statistics, Penn State
+University, and may be used by anyone if credit is given. The author
+assumes no liabilities for its use or misuse.
+***********************************************************************
+References:
+
+Schafer, J.L. (1998), "Some improved procedures for linear mixed
+models." Submitted to Journal of the American Statistical Association. 
+***********************************************************************

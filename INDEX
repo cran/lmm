@@ -1,0 +1,21 @@
+ecmeml.lmm             ECME algorithm for maximum-likelihood (ML) estimation in
+                       linear mixed models
+
+ecmerml.lmm            ECME algorithm for restricted maximum-likelihood (RML)
+                       estimation in linear mixed models
+
+fastmcmc.lmm           Rapidly converging Markov chain Monte Carlo algorithm for
+                       Bayesian inference in linear mixed models
+
+fastmode.lmm           Rapidly converging algorithm for calculating posterior modes
+                       in linear mixed models
+
+fastml.lmm             Rapidly converging algorithm for maximum-likelihood (ML)
+                       estimation in linear mixed models
+
+fastrml.lmm            Rapidly converging algorithm for restricted maximum-likelihood
+                       (RML) estimation in linear mixed models
+ 
+mgibbs.lmm             Modified Gibbs sampler for Bayesian inference in linear mixed
+                       models
+

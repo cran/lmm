@@ -1,0 +1,105 @@
+.BG
+.FN fastmode.lmm
+.TL
+Rapidly converging algorithm for calculating posterior modes
+in linear mixed models
+.DN
+Computes the marginal posterior mode of the variance
+parameters in linear mixed models using a rapidly converging
+procedure described by Schafer (1998), which combines Fisher
+scoring with an ECME algorithm. The method is a minor
+modification of the restricted maximum-likelihood (RML)
+procedure used in "fastrml.lmm". The model is identical to
+that of "fastrml.lmm" with the addition of prior
+distributions for the variance parameters.
+
+For a description of the prior distribution, see the "Details"
+section below.
+.CS
+fastmode.lmm(y, subj, occ, pred, xcol, zcol, vmax, start,
+   maxits=100, eps=0.0001, prior)
+.RA
+Identical to those for the function "fastrml.lmm", with one
+additional required argument:
+.AG prior
+A list with four components specifying the hyperparameters of
+the prior distribution applied to sigma2 and psi. The
+components must be named "a", "b", "c", and "Dinv". All are
+scalars except for "Dinv", which is a matrix of dimension
+c(length(zcol),length(zcol)).
+.RT
+a list containing the following components.
+.RC beta	
+vector of same length as "xcol" containing estimated fixed
+effects. This estimate represents the posterior mean for beta,
+conditional upon the estimated values of the variance
+parameters sigma2 and psi.
+.RC sigma2
+estimate of residual error variance. 
+.RC psi
+matrix of dimension c(length(zcol),length(zcol)) containing
+estimated variances and covariances of the random effects.
+.RC converged
+T if the algorithm converged, F if it did not.
+.RC iter
+number of iterations actually performed. Will be equal
+to "maxits" if converged=F.
+.RC reject
+a logical vector of length iter indicating, for each
+iteration, whether the scoring estimates were rejected
+and replaced by ECME estimates (T), or whether the scoring
+estimates were accepted (F). Scoring estimates are rejected
+if they do not increase the log-posterior density.
+.RC logpost
+vector of length "iter" reporting the value of the
+log-posterior density at each iteration.
+.RC cov.beta
+matrix of dimension c(length(xcol),length(xcol)) containing
+estimated variances and covariances for elements of "beta".
+These are conventional estimates which regard the variance
+parameters (sigma2 and psi) as fixed at their estimated
+values. 
+.DT
+The algorithm is described in the appendix of Schafer (1998).
+Scoring is carried out on log(sigma2) and the nonredundant
+elements of the inverse of psi/sigma2, taking logs of the
+diagonal elements. Upon convergence, the estimates  represent
+the mode of the joint posterior density of 1/sigma2 and the
+inverse of psi, marginalized (i.e. integrated) over beta.
+
+The prior distribution applied to the within-unit residual
+variance is scaled inverted-chisquare,
+
+		sigma2 ~ a / chisq(b),
+
+where chisq(b) denotes a chisquare random variable with b
+degrees of freedom, and a and b are user-defined
+hyperparameters. Values for the hyperparmeters may be chosen
+by regarding a/b as a rough prior guess for sigma2, and as
+the imaginary degrees of freedom on which this guess is based.
+
+The prior distribution applied to the between-unit covariance
+matrix is inverted Wishart,
+
+		   psiinv ~ W(c,D),
+
+where psiinv is the inverse of the between-unit covariance
+matrix psi, and W(c,D) denotes a Wishart distribution with
+degrees of freedom c and scale matrix D. Values for the
+hyperparameters may be chosen by regarding Dinv/c (the inverse
+of D divided by c) as a rough prior guess for psi, and c as
+the imaginary degrees of freedom on which this guess is based.
+
+An improper uniform prior density function is applied to
+the fixed effects beta.
+.SH REFERENCES
+Schafer, J.L. (1998) Some improved procedures for linear mixed
+models. Submitted to Journal of the American Statistical
+Association.
+.SA
+ecmeml.lmm, ecmerml.lmm, fastml.lmm, fastrml.lmm,
+mgibbs.lmm, fastmcmc.lmm, example.lmm
+.EX
+For a detailed example, see the file "example.s" distributed 
+with this library.
+.WR
