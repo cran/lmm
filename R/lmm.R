@@ -60,7 +60,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 		ztvinvx=array(0,c(q,p,m)),
 		a=array(0,c(q,q,m)),wkqp=matrix(0,q,p),
 		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1),
-		abc=abc,dinv=dinv)
+		abc=abc,dinv=dinv,PACKAGE="lmm")
 	cat("\n")
 	iter.mode <- tmp$iter
         msg <- tmp$msg
@@ -106,7 +106,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 	sig2hat <- tmp$sigma2
 	xihat <- tmp$xi
 	#
-	junk <- .Fortran("rngs",as.integer(seed))
+	junk <- .Fortran("rngs",as.integer(seed),PACKAGE="lmm")
 	cat("Performing FAST-MCMC...")
 	tmp <- .Fortran("fastmcmc",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
@@ -129,7 +129,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 		sigma2s=rep(0,iter),psis=array(0,c(q,q,iter)),
 		g=g,wkgg=wkgg,wkgg2=matrix(0,g+1,g+1),wkg=rep(0,g+1),
 		sig2hat=sig2hat,xihat=xihat,xigibbs=matrix(0,q,q),
-		reject=integer(iter),ratios=rep(0,iter),df=as.double(df))
+		reject=integer(iter),ratios=rep(0,iter),df=as.double(df),PACKAGE="lmm")
 	cat("\n")
 	clock <- proc.time()-now
 	#
@@ -213,7 +213,7 @@ fastmode.lmm <- function(y,subj,pred,xcol,zcol,prior,vmax,occ,start,maxits=100,
 		ztvinvx=array(0,c(q,p,m)),
 		a=array(0,c(q,q,m)),wkqp=matrix(0,q,p),
 		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1),
-		abc=abc,dinv=dinv)
+		abc=abc,dinv=dinv,PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
 	iter <- tmp$iter
@@ -306,7 +306,7 @@ fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		g=g,reject=integer(maxits),
 		ztvinvx=array(0,c(q,p,m)),
 		a=array(0,c(q,q,m)),wkqp=matrix(0,q,p),
-		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1))
+		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1),PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
 	iter <- tmp$iter
@@ -348,7 +348,7 @@ fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		varb=array(0,c(q,q,m)),
 		covbbeta=array(0,c(q,p,m)),
 		wkpg2=matrix(0,p,g+1),wkqg2=matrix(0,q,g+1),
-		xi=xi,wkqq1=matrix(0,q,q),ntot,err=integer(1))
+		xi=xi,wkqq1=matrix(0,q,q),ntot,err=integer(1),PACKAGE="lmm")
 	{if(tmp1$err==0){
 		cov.beta.new <- tmp1$varbeta
 		cov.b.new <- tmp1$varb
@@ -425,7 +425,7 @@ ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		llvec=numeric(as.integer(maxits)),
 		eps=as.double(eps),
 		ztvinvx=array(0,c(q,p,m)),a=array(0,c(q,q,m)),
-		wkqp=matrix(0,q,p))
+		wkqp=matrix(0,q,p),PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
 	iter <- tmp$iter
@@ -489,7 +489,7 @@ mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
 	storage.mode(abc) <- "double"
 	dinv <- prior$Dinv
 	storage.mode(dinv) <- "double"
-	junk <- .Fortran("rngs",as.integer(seed))
+	junk <- .Fortran("rngs",as.integer(seed),PACKAGE="lmm")
 	cat("Performing modified Gibbs...")
 	now <- proc.time()
 	tmp <- .Fortran("mgibbs",ntot,as.integer(subj),m,ist=integer(m),
@@ -510,7 +510,7 @@ mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
 		xi=xi,wkqnm=array(0,c(q,nmax,m)),
 		b=matrix(0,q,m),maxits=as.integer(iter),
 		abc=abc,dinv=dinv,sqrtu=array(0,c(q,q,m)),
-		sigma2s=rep(0,iter),psis=array(0,c(q,q,iter)))
+		sigma2s=rep(0,iter),psis=array(0,c(q,q,iter)),PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
         msg <- tmp$msg
@@ -589,7 +589,7 @@ fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		llvec=numeric(as.integer(maxits)),
 		eps=as.double(eps),xiecme=matrix(0,q,q),
 		g=g,reject=integer(maxits),
-		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1))
+		wkg=rep(0,g+1),wkgg=matrix(0,g+1,g+1),PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
 	iter <- tmp$iter
@@ -679,7 +679,7 @@ ecmeml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		b=matrix(0,q,m),cvgd=integer(1),obeta=rep(0,p),
 		oxi=matrix(0,q,q),maxits=as.integer(maxits),
 		llvec=numeric(as.integer(maxits)),
-		eps=as.double(eps))
+		eps=as.double(eps),PACKAGE="lmm")
 	clock <- proc.time()-now
 	cat("\n")
 	iter <- tmp$iter
