@@ -4,6 +4,7 @@
 ECME algorithm for restricted maximum-likelihood (RML)
 estimation in linear mixed models
 }
+
 \description{
 Computes RML estimates of parameters in linear mixed models
 using the ECME procedure described by Schafer (1998). This
@@ -15,10 +16,12 @@ This function is provided mainly for comparison against
 For a description of the model, see the "Details" section
 below.
 }
+
 \usage{
-ecmerml.lmm(y, subj, occ, pred, xcol, zcol, vmax, start,
+ecmerml.lmm(y, subj, pred, xcol, zcol, vmax, occ, start,
    maxits=1000, eps=0.0001)
 }
+
 \arguments{
 \item{y}{
 vector of responses. This is simply the individual yi vectors
@@ -32,19 +35,6 @@ indicators i for the elements of y. For example, suppose
 that y is c(y1,y2,y3,y4) where length(y1)=2, length(y2)=3,
 length(y3)=2, and length(y4)=7. Then subj should be
 c(1,1,2,2,2,3,3,4,4,4,4,4,4,4).
-}
-\item{occ}{
-vector of same length as y indicating the "occasions" for the
-elements of y. In a longitudinal dataset where each individual
-is measured on at most nmax distinct occasions, each element
-of y corresponds to one subject-occasion, and the elements of
-of occ should be coded as 1,2,\dots,nmax to indicate these
-occasion labels. (You should label the occasions as
-1,2,\dots,nmax even if they are not equally spaced in time; the
-actual times of measurement will be incorporated into the
-matrix "pred" below.) In a clustered dataset, the elements 
-of occ label the units within each cluster i, using the labels
-1,2,\dots,ni.
 }
 \item{pred}{
 matrix of covariates used to predict y. The number of rows
@@ -74,6 +64,18 @@ specified by the user, an identity matrix is used. In most
 applications of this model one will want to have Vi =
 identity, so most of the time this argument can be omitted.
 }
+\item{occ}{
+vector of same length as y indicating the "occasions" for the
+elements of y. This argument is relevant only if a
+non-identity vmax is specified. In a longitudinal dataset
+where each individual is measured on at most nmax distinct
+occasions, each element of y corresponds to one
+subject-occasion, and the elements of occ should be coded as
+1,2,\dots,nmax to indicate these occasion labels. (You should
+label the occasions as 1,2,\dots,nmax even if they are not
+equally spaced in time; the actual times of measurement will
+be incorporated into the matrix "pred".) 
+}
 \item{start}{
 optional starting values of the parameters. If this argument
 is not given then the function chooses its own starting values.
@@ -94,6 +96,7 @@ converged if the relative differences in all parameters from
 one iteration to the next are less than eps--that is, if
 all(abs(new-old)<eps*abs(old)).
 }}
+
 \value{
 a list containing the following components.
 
@@ -138,6 +141,7 @@ parameters (sigma2 and psi) as fixed at their RML estimates.
 (An improved version which incorporates variance-parameter
 uncertainty is available from the function "fastrml.lmm".)
 }}
+
 \details{
 For details of the algorithm, see Section 3 of Schafer (1998).
 
@@ -161,29 +165,34 @@ where
 The vector bi is assumed to be normally distributed
 with mean zero and unstructured covariance matrix psi, 
 
-	bi \eqn{\sim}  N(0,psi) independently for i=1,\dots,m.
+        bi \eqn{\sim}{~}  N(0,psi) independently for i=1,\dots,m.
 
 The residual vector ei is assumed to be
 
-	ei \eqn{\sim} N(0,sigma2*Vi)
+        ei \eqn{\sim}{~} N(0,sigma2*Vi)
 
 where Vi is a known (ni x ni) matrix. In most applications,
 Vi is the identity matrix.
 }
+
 \references{
 Schafer, J.L. (1998) Some improved procedures for linear mixed
 models. Submitted to Journal of the American Statistical
 Association. 
 }
+
 \seealso{
-\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{fastmcmc.lmm}}, 
-\code{\link[lmm]{fastmode.lmm}}, \code{\link[lmm]{fastml.lmm}}, 
-\code{\link[lmm]{fastrml.lmm}}, \code{\link[lmm]{mgibbs.lmm}} 
+\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{fastml.lmm}},
+\code{\link[lmm]{fastrml.lmm}}, \code{\link[lmm]{fastmode.lmm}},
+\code{\link[lmm]{mgibbs.lmm}}, \code{\link[lmm]{fastmcmc.lmm}},
+\code{\link[lmm]{example.lmm}}
 }
+
 \examples{
 \dontrun{
-For a detailed example, see the file "example.R" distributed
+For a detailed example, see the file "example.lmm.R" distributed
 with this library.
+
 }}
+
 \keyword{models}
-% Converted by Sd2Rd version 1.21.

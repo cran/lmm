@@ -1,9 +1,10 @@
 ###############################################################################
-fastmcmc.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,seed,vmax,
+fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 	start.mode,maxits=100,eps=.0001,iter=1000,start.mcmc,df=4){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
@@ -11,6 +12,7 @@ fastmcmc.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,seed,vmax,
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -131,16 +133,24 @@ fastmcmc.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,seed,vmax,
 	cat("\n")
 	clock <- proc.time()-now
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		sigma2.series=tmp$sigma2s,psi.series=tmp$psis,
 		ratios=tmp$ratios,accept=(tmp$reject==0),
 		mode.list=mode.list)}
 ###############################################################################
-fastmode.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,vmax,start,maxits=100,
+fastmode.lmm <- function(y,subj,pred,xcol,zcol,prior,vmax,occ,start,maxits=100,
 	eps=.0001){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
@@ -149,6 +159,7 @@ fastmode.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,vmax,start,maxits=100,
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -228,15 +239,23 @@ fastmode.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,vmax,start,maxits=100,
 	if(!converged) warning(paste("did not converge by",
 	   format(iter),"iterations"))
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		converged=converged,iter=iter,reject=reject,
 		logpost=llvec,cov.beta=cov.beta)}
 ###############################################################################
-fastrml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
+fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 	eps=.0001){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
@@ -244,6 +263,7 @@ fastrml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -339,23 +359,32 @@ fastrml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
 		cov.b.new <- NULL
 		cov.beta.new <- NULL}}
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		converged=converged,iter=iter,reject=reject,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b,
 		cov.beta.new=cov.beta.new,cov.b.new=cov.b.new,
 		cov.b.beta.new=cov.b.beta.new)}
 ###############################################################################
-ecmerml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=1000,
+ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 	eps=.0001){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -417,21 +446,30 @@ ecmerml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=1000,
 	b.hat <- tmp$b
 	cov.b <- tmp$u*tmp$sigma2
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		converged=converged,iter=iter,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b)}
 ###############################################################################
-mgibbs.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,seed,vmax,start,
+mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
    iter=1000){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -487,14 +525,22 @@ mgibbs.lmm <- function(y,subj,occ,pred,xcol,zcol,prior,seed,vmax,start,
 	else if(msg==5)
           warning("t(X)%*%W%*%X became non-pos.def. during iterations")}
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		sigma2.series=tmp$sigma2s,psi.series=tmp$psis)}
 ###############################################################################
-fastml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
+fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 	eps=.0001){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
@@ -502,6 +548,7 @@ fastml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -570,21 +617,30 @@ fastml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=50,
 	b.hat <- tmp$b
 	cov.b <- tmp$sigma2*tmp$u
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		converged=converged,iter=iter,reject=reject,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b)}
 ###############################################################################
-ecmeml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=1000,
+ecmeml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 	eps=.0001){
-	m <- length(table(subj))
+        tmp <- table(subj)
+	m <- length(tmp)
+	nmax <- max(tmp)
 	ntot <- length(y)
-	nmax <- as.integer(max(occ))
 	pcol <- ncol(pred)
 	q <- length(zcol)
 	p <- length(xcol)
 	#
 	{if(missing(vmax)){
 		vmax <- diag(rep(1,nmax))
+                occ <- integer(ntot)
 		iflag <- as.integer(1)}
 	else iflag <- as.integer(0)}
 	storage.mode(vmax) <- "double"
@@ -644,7 +700,14 @@ ecmeml.lmm <- function(y,subj,occ,pred,xcol,zcol,vmax,start,maxits=1000,
 	b.hat <- tmp$b
 	cov.b <- tmp$u*tmp$sigma2
 	#
-	list(beta=tmp$beta,sigma2=tmp$sigma2,psi=tmp$xi*tmp$sigma2,
+        psi <- tmp$xi*tmp$sigma2
+        beta <- tmp$beta
+	if(!is.null(dimnames(pred)[[2]])){
+           colnames <- dimnames(pred)[[2]]
+           names(beta) <- colnames[xcol]
+           dimnames(psi) <- list(colnames[zcol],colnames[zcol])}
+        #
+	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		converged=converged,iter=iter,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b)}
 ###############################################################################

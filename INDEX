@@ -19,3 +19,6 @@ fastrml.lmm            Rapidly converging algorithm for restricted maximum-likel
 mgibbs.lmm             Modified Gibbs sampler for Bayesian inference in linear mixed
                        models
 
+example.lmm            lmm library example command file 
+
+

@@ -419,14 +419,18 @@ C********* end of main iteration *****************
       end
 C***********************************************************************
       subroutine drcand(g,wkg,gmax,estarhat,wkgg,q,xi,sigma2,df,
-     /     logdens,wkqq1)
+     /     logdens,wkqq1,ntries)
 C Draws a candidate for Metropolis-Hastings, storing it in sigma2
-C and xi, and calculates its approximate density on the eta scale
-      integer q,g,gmax,i,j,gi,err
+C and xi, and calculates its approximate density on the eta scale.
+C   ntries = no. of attempts required to get a positive definite
+C   candidate.
+      integer q,g,gmax,i,j,gi,err,ntries
       real gauss,gamm
       double precision wkg(0:g),estarhat(0:gmax),wkgg(0:g,0:g),
      /     xi(q,q),sigma2,df,sum,logdens,chsq,tmp,wkqq1(q,q)
+      ntries=0
  1    continue
+      ntries=ntries+1
 C     *** draw the chisquare and normal variates, and calculate ***
 C     *** the log-density on the eta scale ************************
       chsq=dble(2.*gamm(sngl(df)/2.))
@@ -549,7 +553,7 @@ C     6 = supplied xihat is non-pos.def.
       double precision estarhat(0:50)
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,
      /     pcol,q,zcol(q),iflag,err,msg,iter,p,xcol(p),i,j,
-     /     maxits,g,gi,reject(maxits),accept
+     /     maxits,g,gi,reject(maxits),accept,ntries
       double precision vmax(nmax,nmax),w(nmax,nmax,m),
      /     vinv(nmax,nmax,m),pred(ntot,pcol),
      /     ztvinv(q,nmax,m),ztvinvz(q,q,m),ldv,u(q,q,m),sigma2,
@@ -690,7 +694,7 @@ C        *** finish out the Gibbs cycle *****************************
 C        *** draw candidate for Metropolis-Hastings ****************
 C        **** storing the values in sigma2 and xi ******************
          call drcand(g,wkg,gmax,estarhat,wkgg,q,xi,sigma2,df,
-     /     lhcand,wkqq1)
+     /     lhcand,wkqq1,ntries)
          if(iter.le.maxits) goto 50
 C********* end of main iteration *****************
       call bdiag(q,m,u)
@@ -723,6 +727,19 @@ C     *** calculate trace *************
       return
       end
 C***********************************************************************
+      subroutine mkocc(ntot,occ,m,ist,ifin)
+C Fills in occ with 1,...,ni for subjects i=1,...,m
+      integer ntot,occ(ntot),m,ist(m),ifin(m),s,i,j
+      do 20 s=1,m
+         j=0
+         do 10 i=ist(s),ifin(s)
+            j=j+1
+            occ(i)=j
+ 10      continue
+ 20   continue
+      return
+      end
+C***********************************************************************
       subroutine preecme1(ntot,subj,m,ist,ifin,occ,nmax,vmax,wknnm,
      /     vinv,pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,ldv,err)
 C Preliminary manipulations for ECME-ML. After execution, 
@@ -733,8 +750,8 @@ C     ztvinv  = t(z_i)%*% inverse of V_i, i=1,...,m
 C     ztvinvz = t(z_i)%*%inv(V_i)%*%(z_i), i=1,...,m
 C     ldv = .5*sum of log det(V_i)
 C Needs a workspace wknnm.
-C Note: if V_i's are all identity, then let vmax, wknnm, vinv be 
-C blank arrays and set iflag = 1.
+C Note: if V_i's are all identity (indicated by iflag=1) then 
+C vmax, wknnm, vinv, are ignored and occ is filled in with 1,...,ni.
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,pcol,
      /     q,zcol(q),iflag,err
       double precision vmax(nmax,nmax),wknnm(nmax,nmax,m),
@@ -748,6 +765,7 @@ C blank arrays and set iflag = 1.
          call bkv(nmax,m,wknnm,ntot,occ,ist,ifin)
          call mmulv(nmax,m,wknnm,vinv,ntot,occ,ist,ifin)
       else
+         call mkocc(ntot,occ,m,ist,ifin)
          ldv=dble(0.)
       endif
       call mmu(ntot,pcol,pred,q,zcol,nmax,m,wknnm,occ,ist,ifin,ztvinv,
@@ -1739,8 +1757,8 @@ C     ztvinvz = t(Z_i)%*%inv(V_i)%*%(Z_i), i=1,...,m
 C     ztvinvx = t(Z_i)%*%inv(V_i)%*%(X_i), i=1,...,m
 C     ldv = .5*sum of log det(V_i)
 C Needs a workspace wknnm.
-C Note: if V_i's are all identity, then let vmax, wknnm, vinv be 
-C blank arrays and set iflag = 1.
+C Note: if V_i's are all identity (indicated by iflag=1) then 
+C vmax, wknnm, vinv, are ignored and occ is filled in with 1,...,ni.
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,pcol,
      /     q,zcol(q),p,xcol(p),iflag,err
       double precision vmax(nmax,nmax),wknnm(nmax,nmax,m),
@@ -1754,6 +1772,7 @@ C blank arrays and set iflag = 1.
          call bkv(nmax,m,wknnm,ntot,occ,ist,ifin)
          call mmulv(nmax,m,wknnm,vinv,ntot,occ,ist,ifin)
       else
+         call mkocc(ntot,occ,m,ist,ifin)
          ldv=dble(0.)
       endif
       call mmu(ntot,pcol,pred,q,zcol,nmax,m,wknnm,occ,ist,ifin,ztvinv,
@@ -2129,11 +2148,10 @@ C***********************************************************************
      /     pred,q,ztvinv,ztvinvz,iflag,err,msg,sigma2,p,xcol,
      /     beta,y,delta,xtw,xtwx,xtwy,xtwxinv,wkqq1,wkqq2,xi,
      /     wkqnm,b)
-C Starting values for ECME-1.
+C Starting values for lmm.
 C Sets msg=2 if t(X)%*%W%*%X is not full rank.
 C Sets msg=3 if there are no individual subject-level regressions from
-C     which to estimate starting value for xi.
-C  from which the starting value for xi can be calculated.
+C which to estimate starting value for xi.
       integer ntot,m,ist(m),ifin(m),occ(ntot),nmax,pcol,q,
      /     iflag,err,msg,p,xcol(p),s,st,fin,mstar,err1,i,j,k
       double precision vinv(nmax,nmax,m),pred(ntot,pcol),
@@ -2190,7 +2208,7 @@ C now perform unit-level regressions where possible
  150     continue
          do 200 i=1,q
             do 180 j=i,q
-               xi(i,j)=xi(i,j)+wkqq2(i,j)*sigma2+b(i,s)*b(j,s)
+               xi(i,j)=xi(i,j)+b(i,s)*b(j,s)
  180        continue
  200     continue
  299     continue
@@ -2361,8 +2379,8 @@ C     ztvinvz = t(Z_i)%*%inv(V_i)%*%(Z_i), i=1,...,m
 C     ztvinvx = t(Z_i)%*%inv(V_i)%*%(X_i), i=1,...,m
 C     ldv = .5*sum of log det(V_i)
 C Needs a workspace wknnm.
-C Note: if V_i's are all identity, then let vmax, wknnm, vinv be 
-C blank arrays and set iflag = 1.
+C Note: if V_i's are all identity (indicated by iflag=1) then 
+C vmax, wknnm, vinv, are ignored and occ is filled in with 1,...,ni.
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,pcol,
      /     q,zcol(q),p,xcol(p),iflag,err
       double precision vmax(nmax,nmax),wknnm(nmax,nmax,m),
@@ -2376,6 +2394,7 @@ C blank arrays and set iflag = 1.
          call bkv(nmax,m,wknnm,ntot,occ,ist,ifin)
          call mmulv(nmax,m,wknnm,vinv,ntot,occ,ist,ifin)
       else
+         call mkocc(ntot,occ,m,ist,ifin)
          ldv=dble(0.)
       endif
       call mmu(ntot,pcol,pred,q,zcol,nmax,m,wknnm,occ,ist,ifin,ztvinv,
@@ -4058,8 +4077,8 @@ C     ztvinv  = t(z_i)%*% inverse of V_i, i=1,...,m
 C     ztvinvz = t(z_i)%*%inv(V_i)%*%(z_i), i=1,...,m
 C     ldv = .5*sum of log det(V_i)
 C Needs a workspace wknnm.
-C Note: if V_i's are all identity, then let vmax, wknnm, vinv be 
-C blank arrays and set iflag = 1.
+C Note: if V_i's are all identity (indicated by iflag=1) then 
+C vmax, wknnm, vinv, are ignored and occ is filled in with 1,...,ni.
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,pcol,
      /     q,zcol(q),iflag,err
       double precision vmax(nmax,nmax),wknnm(nmax,nmax,m),
@@ -4073,6 +4092,7 @@ C blank arrays and set iflag = 1.
          call bkv(nmax,m,wknnm,ntot,occ,ist,ifin)
          call mmulv(nmax,m,wknnm,vinv,ntot,occ,ist,ifin)
       else
+         call mkocc(ntot,occ,m,ist,ifin)
          ldv=dble(0.)
       endif
       call mmu(ntot,pcol,pred,q,zcol,nmax,m,wknnm,occ,ist,ifin,ztvinv,

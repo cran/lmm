@@ -4,6 +4,7 @@
 Modified Gibbs sampler for Bayesian inference in linear mixed
 models
 }
+
 \description{
 Simulates posterior draws of parameters in linear mixed models
 using a Markov chain Monte Carlo (MCMC) procedure, the
@@ -17,7 +18,7 @@ For a description of the model and the prior distribution, see
 the "Details" section below.
 }
 \usage{
-mgibbs.lmm(y, subj, occ, pred, xcol, zcol, prior, seed, vmax,
+mgibbs.lmm(y, subj, pred, xcol, zcol, prior, seed, vmax, occ,
    start, iter=1000)
 }
 \arguments{
@@ -33,19 +34,6 @@ indicators i for the elements of y. For example, suppose
 that y is c(y1,y2,y3,y4) where length(y1)=2, length(y2)=3,
 length(y3)=2, and length(y4)=7. Then subj should be
 c(1,1,2,2,2,3,3,4,4,4,4,4,4,4).
-}
-\item{occ}{
-vector of same length as y indicating the "occasions" for the
-elements of y. In a longitudinal dataset where each individual
-is measured on at most nmax distinct occasions, each element
-of y corresponds to one subject-occasion, and the elements of
-of occ should be coded as 1,2,\dots,nmax to indicate these
-occasion labels. (You should label the occasions as
-1,2,\dots,nmax even if they are not equally spaced in time; the
-actual times of measurement will be incorporated into the
-matrix "pred" below.) In a clustered dataset, the elements 
-of occ label the units within each cluster i, using the labels
-1,2,\dots,ni.
 }
 \item{pred}{
 matrix of covariates used to predict y. The number of rows
@@ -86,6 +74,18 @@ specified by the user, an identity matrix is used. In most
 applications of this model one will want to have Vi =
 identity, so most of the time this argument can be omitted.
 }
+\item{occ}{
+vector of same length as y indicating the "occasions" for the
+elements of y. This argument is relevant only if a
+non-identity vmax is specified. In a longitudinal dataset
+where each individual is measured on at most nmax distinct
+occasions, each element of y corresponds to one
+subject-occasion, and the elements of occ should be coded as
+1,2,\dots,nmax to indicate these occasion labels. (You should
+label the occasions as 1,2,\dots,nmax even if they are not
+equally spaced in time; the actual times of measurement will
+be incorporated into the matrix "pred".) 
+}
 \item{start}{
 optional starting values of the parameters. If this argument
 is not given then the function chooses its own starting values.
@@ -99,6 +99,7 @@ matrix of dimension c(length(zcol),length(zcol)), and
 number of cycles of the modified Gibbs sampler to be
 performed. 
 }}
+
 \value{
 a list containing the following components.
 
@@ -125,6 +126,7 @@ array of dimension c(length(zcol),length(zcol),iter)
 containing the entire history of simulated values of psi. That
 is, psi.series[,,t] contains the value of psi at cycle t.
 }}
+
 \details{
 The algorithm is described in Section 5 of Schafer (1998).
 
@@ -145,15 +147,14 @@ where
 		subject or cluster i (random effects); and
 	ei    = (ni x 1) vector of residual errors.
 
-
 The vector bi is assumed to be normally distributed
 with mean zero and unstructured covariance matrix psi, 
 
-	bi \eqn{\sim}  N(0,psi) independently for i=1,\dots,m.
+        bi \eqn{\sim}{~} N(0,psi) independently for i=1,\dots,m.
 
 The residual vector ei is assumed to be
 
-	ei \eqn{\sim} N(0,sigma2*Vi)
+        ei \eqn{\sim}{~} N(0,sigma2*Vi)
 
 where Vi is a known (ni x ni) matrix. In most applications,
 Vi is the identity matrix.
@@ -161,7 +162,7 @@ Vi is the identity matrix.
 The prior distribution applied to the within-unit residual
 variance is scaled inverted-chisquare,
 
-		sigma2 \eqn{\sim} a / chisq(b),
+                sigma2 \eqn{\sim}{~} a / chisq(b),
 
 where chisq(b) denotes a chisquare random variable with b
 degrees of freedom, and a and b are user-defined
@@ -172,7 +173,7 @@ the imaginary degrees of freedom on which this guess is based.
 The prior distribution applied to the between-unit covariance
 matrix is inverted Wishart,
 
-		   psiinv \eqn{\sim} W(c,D),
+                   psiinv \eqn{\sim}{~} W(c,D),
 
 where psiinv is the inverse of the between-unit covariance
 matrix psi, and W(c,D) denotes a Wishart distribution with
@@ -190,15 +191,19 @@ Schafer, J.L. (1998) Some improved procedures for linear mixed
 models. Submitted to Journal of the American Statistical
 Association.
 }
+
 \seealso{
-\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}}, 
-\code{\link[lmm]{fastmcmc.lmm}}, \code{\link[lmm]{fastmode.lmm}}, 
-\code{\link[lmm]{fastml.lmm}}, \code{\link[lmm]{fastrml.lmm}}
+\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}},
+\code{\link[lmm]{fastml.lmm}}, \code{\link[lmm]{fastrml.lmm}},
+\code{\link[lmm]{fastmode.lmm}}, \code{\link[lmm]{fastmcmc.lmm}},
+\code{\link[lmm]{example.lmm}}
 }
+
 \examples{
 \dontrun{
-For a detailed example, see the file "example.R" distributed
+For a detailed example, see the file "example.lmm.R" distributed
 with this library.
+
 }}
+
 \keyword{models}
-% Converted by Sd2Rd version 1.21.

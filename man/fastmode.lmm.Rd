@@ -17,13 +17,14 @@ distributions for the variance parameters.
 For a description of the prior distribution, see the "Details"
 section below.
 }
-\usage{
-fastmode.lmm(y,subj,occ,pred,xcol,zcol,prior,vmax,start,maxits=100,
-        eps=.0001)
 
+\usage{
+fastmode.lmm(y, subj, pred, xcol, zcol, prior, vmax, occ, start,
+   maxits=100, eps=0.0001)
 Identical to those for the function "fastrml.lmm", with one
 additional required argument:
 }
+
 \arguments{
 \item{y}{
 vector of responses. This is simply the individual yi vectors
@@ -37,19 +38,6 @@ indicators i for the elements of y. For example, suppose
 that y is c(y1,y2,y3,y4) where length(y1)=2, length(y2)=3,
 length(y3)=2, and length(y4)=7. Then subj should be
 c(1,1,2,2,2,3,3,4,4,4,4,4,4,4).
-}
-\item{occ}{
-vector of same length as y indicating the "occasions" for the
-elements of y. In a longitudinal dataset where each individual
-is measured on at most nmax distinct occasions, each element
-of y corresponds to one subject-occasion, and the elements of
-of occ should be coded as 1,2,\dots,nmax to indicate these
-occasion labels. (You should label the occasions as
-1,2,\dots,nmax even if they are not equally spaced in time; the
-actual times of measurement will be incorporated into the
-matrix "pred" below.) In a clustered dataset, the elements 
-of occ label the units within each cluster i, using the labels
-1,2,\dots,ni.
 }
 \item{pred}{
 matrix of covariates used to predict y. The number of rows
@@ -67,6 +55,13 @@ vector of integers indicating which columns of pred will be
 used in Zi. That is, pred[,zcol] is the Zi matrices (stacked
 upon one another).
 }
+\item{prior}{
+A list with four components specifying the hyperparameters of
+the prior distribution applied to sigma2 and psi. The
+components must be named "a", "b", "c", and "Dinv". All are
+scalars except for "Dinv", which is a matrix of dimension
+c(length(zcol),length(zcol)).
+}
 \item{vmax}{
 optional matrix of dimension c(max(occ),max(occ)) from which
 the Vi matrices will be extracted. In a longitudinal dataset, 
@@ -78,6 +73,18 @@ and columns of vmax for those occasions. If no vmax is
 specified by the user, an identity matrix is used. In most
 applications of this model one will want to have Vi =
 identity, so most of the time this argument can be omitted.
+}
+\item{occ}{
+vector of same length as y indicating the "occasions" for the
+elements of y. This argument is relevant only if a
+non-identity vmax is specified. In a longitudinal dataset
+where each individual is measured on at most nmax distinct
+occasions, each element of y corresponds to one
+subject-occasion, and the elements of occ should be coded as
+1,2,\dots,nmax to indicate these occasion labels. (You should
+label the occasions as 1,2,\dots,nmax even if they are not
+equally spaced in time; the actual times of measurement will
+be incorporated into the matrix "pred".) 
 }
 \item{start}{
 optional starting values of the parameters. If this argument
@@ -98,14 +105,8 @@ convergence criterion. The algorithm is considered to have
 converged if the relative differences in all parameters from
 one iteration to the next are less than eps--that is, if
 all(abs(new-old)<eps*abs(old)).
-}
-\item{prior}{
-A list with four components specifying the hyperparameters of
-the prior distribution applied to sigma2 and psi. The
-components must be named "a", "b", "c", and "Dinv". All are
-scalars except for "Dinv", which is a matrix of dimension
-c(length(zcol),length(zcol)).
 }}
+
 \value{
 a list containing the following components.
 
@@ -147,6 +148,7 @@ These are conventional estimates which regard the variance
 parameters (sigma2 and psi) as fixed at their estimated
 values. 
 }}
+
 \details{
 The algorithm is described in the appendix of Schafer (1998).
 Scoring is carried out on log(sigma2) and the nonredundant
@@ -158,7 +160,7 @@ inverse of psi, marginalized (i.e. integrated) over beta.
 The prior distribution applied to the within-unit residual
 variance is scaled inverted-chisquare,
 
-		sigma2 \eqn{\sim} a / chisq(b),
+                sigma2 \eqn{\sim}{~} a / chisq(b),
 
 where chisq(b) denotes a chisquare random variable with b
 degrees of freedom, and a and b are user-defined
@@ -169,7 +171,7 @@ the imaginary degrees of freedom on which this guess is based.
 The prior distribution applied to the between-unit covariance
 matrix is inverted Wishart,
 
-		   psiinv \eqn{\sim} W(c,D),
+                   psiinv \eqn{\sim}{~} W(c,D),
 
 where psiinv is the inverse of the between-unit covariance
 matrix psi, and W(c,D) denotes a Wishart distribution with
@@ -181,20 +183,25 @@ the imaginary degrees of freedom on which this guess is based.
 An improper uniform prior density function is applied to
 the fixed effects beta.
 }
+
 \references{
 Schafer, J.L. (1998) Some improved procedures for linear mixed
 models. Submitted to Journal of the American Statistical
 Association.
 }
+
 \seealso{
-\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}}, 
-\code{\link[lmm]{fastmcmc.lmm}}, \code{\link[lmm]{fastml.lmm}}, 
-\code{\link[lmm]{fastrml.lmm}}, \code{\link[lmm]{mgibbs.lmm}}
+\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}},
+\code{\link[lmm]{fastml.lmm}}, \code{\link[lmm]{fastrml.lmm}},
+\code{\link[lmm]{mgibbs.lmm}}, \code{\link[lmm]{fastmcmc.lmm}},
+\code{\link[lmm]{example.lmm}}
 }
+
 \examples{
 \dontrun{
-For a detailed example, see the file "example.R" distributed
+For a detailed example, see the file "example.lmm.R" distributed
 with this library.
+
 }}
+
 \keyword{models}
-% Converted by Sd2Rd version 1.21.
