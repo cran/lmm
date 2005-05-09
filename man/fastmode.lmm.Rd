@@ -21,11 +21,11 @@ section below.
 \usage{
 fastmode.lmm(y, subj, pred, xcol, zcol, prior, vmax, occ, start,
    maxits=100, eps=0.0001)
-Identical to those for the function "fastrml.lmm", with one
-additional required argument:
 }
 
 \arguments{
+Identical to those for the function "fastrml.lmm", with one
+additional required argument:
 \item{y}{
 vector of responses. This is simply the individual yi vectors
 stacked upon one another. Each element of y represents the 
