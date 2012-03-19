@@ -1,0 +1,17 @@
+40358ca5be74604d455cf3964f63129d *ChangeLog
+d60cd376370af2ed1fb0f085715a8e63 *DESCRIPTION
+bf230087942b366995f519c83c144530 *LICENSE
+ad02f9b0164ca47ec0eefde1258302af *NAMESPACE
+2a8228d5bc05457027dcba5f0934ba42 *R/lmm.R
+0a0980dab7e4f5ddb53ed12a869bef80 *inst/doc/improve.pdf
+463a2ab7cca00294132160da489d6958 *inst/doc/lmm-tr.Rnw
+8d6af43329d5b6b1139d6f8fe512e431 *inst/doc/lmm-tr.pdf
+7cac8ba5a28c6724012932ab7b76ddc6 *man/ecmeml.lmm.Rd
+d58d834cbd042f0298bb95ce7f6aaba4 *man/ecmerml.lmm.Rd
+acd7e45ba95b166899674e9dfa5f9521 *man/example.lmm.Rd
+427c15cefd44cc373625a1c4e137b229 *man/fastmcmc.lmm.Rd
+f1620dff2494e9ce9163f26b7340b873 *man/fastml.lmm.Rd
+31348343a9e4701b906c5994cbeeadca *man/fastmode.lmm.Rd
+d7bbfdfecbaed735a316bd1594dfd1d8 *man/fastrml.lmm.Rd
+1b3b40c52539197df3a874ba84b7f4ab *man/mgibbs.lmm.Rd
+1683e1ecef11704652fb43e2beabf1bd *src/lmm.f
