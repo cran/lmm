@@ -1,3 +1,12 @@
+Version 0.5
+
+2012-4-5
+		add argument err to .Fortran calls in functions including
+		ecmeml, ecmerml, fastmcmc, fastml, fastrml, mgibbs
+		as suggested by R -d valgrind --vanilla < example.R
+2012-4-4	remove .lmm suffixes to functions
+		Collect data in example.Rd into marijuana.rda and tabulated in lmm-tr
+
 Version 0.4
 
 2012-03-16	Add ChangeLog, .Rinstignore and lmm-tr.Rnw

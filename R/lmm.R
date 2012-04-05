@@ -1,5 +1,5 @@
 ###############################################################################
-fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
+fastmcmc <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 	start.mode,maxits=100,eps=.0001,iter=1000,start.mcmc,df=4){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -36,6 +36,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 	storage.mode(dinv) <- "double"
 	cat("Performing FAST-MODE...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("fastmode",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -43,7 +44,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		isflag=c(iflag,sflag),
+		isflag=c(iflag,sflag),err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		iter=integer(1),sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),
@@ -145,7 +146,7 @@ fastmcmc.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,
 		ratios=tmp$ratios,accept=(tmp$reject==0),
 		mode.list=mode.list)}
 ###############################################################################
-fastmode.lmm <- function(y,subj,pred,xcol,zcol,prior,vmax,occ,start,maxits=100,
+fastmode <- function(y,subj,pred,xcol,zcol,prior,vmax,occ,start,maxits=100,
 	eps=.0001){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -250,7 +251,7 @@ fastmode.lmm <- function(y,subj,pred,xcol,zcol,prior,vmax,occ,start,maxits=100,
 		converged=converged,iter=iter,reject=reject,
 		logpost=llvec,cov.beta=cov.beta)}
 ###############################################################################
-fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
+fastrml <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 	eps=.0001){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -283,6 +284,7 @@ fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		sflag <- as.integer(0)}}
 	cat("Performing FAST-RML...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("fastrml",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -290,7 +292,7 @@ fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		iflag=iflag,
+		iflag=iflag,err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		iter=integer(1),sflag,sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),
@@ -372,7 +374,7 @@ fastrml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		cov.beta.new=cov.beta.new,cov.b.new=cov.b.new,
 		cov.b.beta.new=cov.b.beta.new)}
 ###############################################################################
-ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
+ecmerml <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 	eps=.0001){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -404,6 +406,7 @@ ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		sflag <- as.integer(0)}}
 	cat("Performing ECME for RML estimation...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("ecmerml",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -411,7 +414,7 @@ ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		iflag=iflag,
+		iflag=iflag,err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		iter=integer(1),sflag,sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),
@@ -457,7 +460,7 @@ ecmerml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		converged=converged,iter=iter,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b)}
 ###############################################################################
-mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
+mgibbs <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
    iter=1000){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -492,6 +495,7 @@ mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
 	junk <- .Fortran("rngs",as.integer(seed),PACKAGE="lmm")
 	cat("Performing modified Gibbs...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("mgibbs",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -499,7 +503,7 @@ mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		isflag=c(iflag,sflag),
+		isflag=c(iflag,sflag),err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),
@@ -535,7 +539,7 @@ mgibbs.lmm <- function(y,subj,pred,xcol,zcol,prior,seed,vmax,occ,start,
 	list(beta=beta,sigma2=tmp$sigma2,psi=psi,
 		sigma2.series=tmp$sigma2s,psi.series=tmp$psis)}
 ###############################################################################
-fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
+fastml <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 	eps=.0001){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -568,6 +572,7 @@ fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		sflag <- as.integer(0)}}
 	cat("Performing FAST-ML...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("fastml",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -575,7 +580,7 @@ fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		iflag=iflag,
+		iflag=iflag,err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		iter=integer(1),sflag,sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),
@@ -628,7 +633,7 @@ fastml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=50,
 		converged=converged,iter=iter,reject=reject,
 		loglik=llvec,cov.beta=cov.beta,b.hat=b.hat,cov.b=cov.b)}
 ###############################################################################
-ecmeml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
+ecmeml <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 	eps=.0001){
         tmp <- table(subj)
 	m <- length(tmp)
@@ -660,6 +665,7 @@ ecmeml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		sflag <- as.integer(0)}}
 	cat("Performing ECME...")
 	now <- proc.time()
+        err <- 0
 	tmp <- .Fortran("ecmeml",ntot,as.integer(subj),m,ist=integer(m),
 		ifin=integer(m),as.integer(occ),nmax,vmax,
 		w=array(0,c(nmax,nmax,m)),
@@ -667,7 +673,7 @@ ecmeml.lmm <- function(y,subj,pred,xcol,zcol,vmax,occ,start,maxits=1000,
 		pcol,as.double(pred),q,as.integer(zcol),
 		ztvinv=array(0,c(q,nmax,m)),
 		ztvinvz=array(0,c(q,q,m)),
-		iflag=iflag,
+		iflag=iflag,err=as.integer(err),
 		msg=integer(1),u=array(0,c(q,q,m)),
 		iter=integer(1),sflag,sigma2=sigma2,p,
 		as.integer(xcol),beta=beta,as.double(y),

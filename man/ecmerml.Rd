@@ -1,26 +1,27 @@
-\name{mgibbs.lmm}
-\alias{mgibbs.lmm}
+\name{ecmerml}
+\alias{ecmerml}
 \title{
-Modified Gibbs sampler for Bayesian inference in linear mixed
-models
+ECME algorithm for restricted maximum-likelihood (RML)
+estimation in linear mixed models
 }
 
 \description{
-Simulates posterior draws of parameters in linear mixed models
-using a Markov chain Monte Carlo (MCMC) procedure, the
-modified Gibbs sampler described by Schafer (1998). This algorithm
-may be slow, requiring a large number of cycles to achieve
-stationarity. In most cases, "fastmcmc.lmm" will perform
-better. This algorithm is provided mainly for comparison
-against "fastmcmc.lmm".
+Computes RML estimates of parameters in linear mixed models
+using the ECME procedure described by Schafer (1998). This
+algorithm may be slow, requiring a large number of cycles
+to converge. In most cases, "fastrml" will perform better.
+This function is provided mainly for comparison against 
+"fastrml". 
 
-For a description of the model and the prior distribution, see
-the "Details" section below.
+For a description of the model, see the "Details" section
+below.
 }
+
 \usage{
-mgibbs.lmm(y, subj, pred, xcol, zcol, prior, seed, vmax, occ,
-   start, iter=1000)
+ecmerml(y, subj, pred, xcol, zcol, vmax, occ, start,
+   maxits=1000, eps=0.0001)
 }
+
 \arguments{
 \item{y}{
 vector of responses. This is simply the individual yi vectors
@@ -50,17 +51,6 @@ upon one another.
 vector of integers indicating which columns of pred will be
 used in Zi. That is, pred[,zcol] is the Zi matrices (stacked
 upon one another).
-}
-\item{prior}{
-A list with four components specifying the hyperparameters of
-the prior distribution applied to sigma2 and psi. The
-components must be named "a", "b", "c", and "Dinv". All are
-scalars except for "Dinv", which is a matrix of dimension
-c(length(zcol),length(zcol)).
-}
-\item{seed}{
-Seed for random number generator. This should be a positive
-integer. 
 }
 \item{vmax}{
 optional matrix of dimension c(max(occ),max(occ)) from which
@@ -95,40 +85,65 @@ vector of the same length as "xcol", "psi" should be a
 matrix of dimension c(length(zcol),length(zcol)), and
 "sigma2" should be a scalar.
 }
-\item{iter}{
-number of cycles of the modified Gibbs sampler to be
-performed. 
+\item{maxits}{
+maximum number of cycles to be performed.
+The algorithm runs to convergence or until "maxits"
+iterations, whichever comes first.
+}
+\item{eps}{
+convergence criterion. The algorithm is considered to have
+converged if the relative differences in all parameters from
+one iteration to the next are less than eps--that is, if
+all(abs(new-old)<eps*abs(old)).
 }}
 
 \value{
 a list containing the following components.
 
 \item{beta}{
-simulated value of coefficients beta after "iter" cycles of
-the modified Gibbs sampler. This is a vector of the same
-length as xcol.
+vector of same length as "xcol" containing estimated fixed
+effects.
 }
 \item{sigma2}{
-simulated value of the residual variance sigma2 after "iter"
-cycles of the modified Gibbs sampler.
+estimate of residual error variance.
 }
 \item{psi}{
-simulated value of the between-unit covariance matrix psi
-after "iter" cycles of the modified Gibbs sampler.
+matrix of dimension c(length(zcol),length(zcol)) containing
+estimated variances and covariances of the random effects.
 }
-\item{sigma2.series}{
-vector of length "iter" containing the entire history of
-simulated values of sigma2. That is, sigma2.series[t] contains
-the value of sigma2 at cycle t.
+\item{converged}{
+T if the algorithm converged, F if it did not.
 }
-\item{psi.series}{
-array of dimension c(length(zcol),length(zcol),iter)
-containing the entire history of simulated values of psi. That
-is, psi.series[,,t] contains the value of psi at cycle t.
+\item{iter}{
+number of iterations actually performed. Will be equal
+to "maxits" if converged=F.
+}
+\item{loglik}{
+vector of length "iter" reporting the value of the
+"restricted" loglikelihood at each iteration.
+}
+\item{cov.beta}{
+matrix of dimension c(length(xcol),length(xcol)) containing
+estimated variances and covariances for elements of "beta".
+These are conventional estimates which regard the variance
+parameters (sigma2 and psi) as fixed at their RML estimates.
+}
+\item{b.hat}{
+a matrix with length(zcol) rows and m columns, where
+b.hat[,i] is an empirical Bayes estimate of bi.
+}
+\item{cov.b}{
+an array of dimension length(zcol) by length(zcol) by m,
+where cov.b[,,i] is an empirical Bayes estimate of the
+covariance matrix associated with bi. These are
+conventional estimates which regard the variance
+parameters (sigma2 and psi) as fixed at their RML estimates.
+(An improved version which incorporates variance-parameter
+uncertainty is available from the function "fastrml".)
 }}
 
 \details{
-The algorithm is described in Section 5 of Schafer (1998).
+For details of the algorithm, see Section 3 of Schafer (1998).
 
 The model, which is typically applied to longitudinal or
 clustered responses, is 
@@ -150,7 +165,7 @@ where
 The vector bi is assumed to be normally distributed
 with mean zero and unstructured covariance matrix psi, 
 
-        bi \eqn{\sim}{~} N(0,psi) independently for i=1,\dots,m.
+        bi \eqn{\sim}{~}  N(0,psi) independently for i=1,\dots,m.
 
 The residual vector ei is assumed to be
 
@@ -158,50 +173,24 @@ The residual vector ei is assumed to be
 
 where Vi is a known (ni x ni) matrix. In most applications,
 Vi is the identity matrix.
-
-The prior distribution applied to the within-unit residual
-variance is scaled inverted-chisquare,
-
-                sigma2 \eqn{\sim}{~} a / chisq(b),
-
-where chisq(b) denotes a chisquare random variable with b
-degrees of freedom, and a and b are user-defined
-hyperparameters. Values for the hyperparmeters may be chosen
-by regarding a/b as a rough prior guess for sigma2, and as
-the imaginary degrees of freedom on which this guess is based.
-
-The prior distribution applied to the between-unit covariance
-matrix is inverted Wishart,
-
-                   psiinv \eqn{\sim}{~} W(c,D),
-
-where psiinv is the inverse of the between-unit covariance
-matrix psi, and W(c,D) denotes a Wishart distribution with
-degrees of freedom c and scale matrix D. Values for the
-hyperparameters may be chosen by regarding Dinv/c (the inverse
-of D divided by c) as a rough prior guess for psi, and c as
-the imaginary degrees of freedom on which this guess is based.
-
-An improper uniform prior density function is applied to
-the fixed effects beta.
 }
 
 \references{
 Schafer, J.L. (1998) Some improved procedures for linear mixed
 models. Submitted to Journal of the American Statistical
-Association.
+Association. 
 }
 
 \seealso{
-\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}},
-\code{\link[lmm]{fastml.lmm}}, \code{\link[lmm]{fastrml.lmm}},
-\code{\link[lmm]{fastmode.lmm}}, \code{\link[lmm]{fastmcmc.lmm}},
-\code{\link[lmm]{example.lmm}}
+\code{\link[lmm]{ecmeml}}, \code{\link[lmm]{fastml}},
+\code{\link[lmm]{fastrml}}, \code{\link[lmm]{fastmode}},
+\code{\link[lmm]{mgibbs}}, \code{\link[lmm]{fastmcmc}},
+\code{\link[lmm]{example}}
 }
 
 \examples{
 \dontrun{
-For a detailed example, see the file "example.lmm.R" distributed
+For a detailed example, see the file "example.R" distributed
 with this library.
 
 }}

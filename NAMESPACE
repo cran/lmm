@@ -1,2 +1,2 @@
 useDynLib(lmm)
-export(ecmeml.lmm, ecmerml.lmm, fastmcmc.lmm, fastml.lmm, fastmode.lmm, fastrml.lmm, mgibbs.lmm)
+export(ecmeml, ecmerml, fastmcmc, fastml, fastmode, fastrml, mgibbs)

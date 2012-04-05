@@ -334,7 +334,7 @@ C     *** draw xi ****************************
 C***********************************************************************
 C Algorithm MGIBBS: modified Gibbs sampler
       subroutine mgibbs(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,isflag,msg,u,sigma2,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,isflag,err,msg,u,sigma2,
      /     p,xcol,beta,y,delta,xtw,xtwx,xtwy,xtwxinv,wkqq1,
      /     wkqq2,xi,wkqnm,b,maxits,abc,dinv,sqrtu,sigma2s,psis)
 C set sflag=1 if starting values supplied.
@@ -537,7 +537,7 @@ C     ******** add in the log-Jacobian **********************
 C***********************************************************************
 C Algorithm FAST-MCMC
       subroutine fastmcmc(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,msg,u,sigma2,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,err,msg,u,sigma2,
      /     p,xcol,beta,y,delta,xtw,xtwx,xtwy,xtwxinv,wkqq1,
      /     wkqq2,xi,wkqnm,b,maxits,abc,dinv,sqrtu,sigma2s,psis,
      /     g,wkgg,wkgg2,wkg,sig2hat,xihat,xigibbs,reject,ratios,df)
@@ -1040,7 +1040,7 @@ C        *** calculate covbbeta **********************************
 C***********************************************************************
 C Algorithm FAST-RML: Finds RML estimates when V_i are known.
       subroutine fastrml(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,msg,u,iter,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,err,msg,u,iter,
      /     sflag,sigma2,p,xcol,beta,y,delta,xtw,xtwx,xtwy,
      /     xtwxinv,wkqq1,wkqq2,xi,wkqnm,b,cvgd,oxi,maxits,llvec,
      /     eps,xiecme,g,reject,ztvinvx,a,wkqp,wkg,wkgg)
@@ -1827,7 +1827,7 @@ C The following subroutines are used by ecmerml().
 C***********************************************************************
 C Algorithm ECME-RML: Finds RML estimates when V_i are known.
       subroutine ecmerml(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,msg,u,iter,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,err,msg,u,iter,
      /     sflag,sigma2,p,xcol,beta,y,delta,xtw,xtwx,xtwy,
      /     xtwxinv,wkqq1,wkqq2,xi,wkqnm,b,cvgd,obeta,oxi,maxits,
      /     llvec,eps,ztvinvx,a,wkqp)
@@ -2673,7 +2673,7 @@ C***********************************************************************
 C Algorithm FAST-MODE: modification of FAST-RML to find posterior
 C mode of variance components.
       subroutine fastmode(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,isflags,msg,u,iter,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,isflags,err,msg,u,iter,
      /     sigma2,p,xcol,beta,y,delta,xtw,xtwx,xtwy,xtwxinv,
      /     wkqq1,wkqq2,xi,wkqnm,b,cvgd,oxi,maxits,llvec,eps,
      /     xiecme,g,reject,ztvinvx,a,wkqp,wkg,wkgg,abc,dinv)
@@ -3465,7 +3465,7 @@ C The following subroutines are used by fastml().
 C***********************************************************************
 C Algorithm FAST-ML: Finds ML estimates when V_i are known.
       subroutine fastml(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,vinv,
-     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,msg,u,iter,
+     /     pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,err,msg,u,iter,
      /     sflag,sigma2,p,xcol,beta,y,delta,xtw,xtwx,xtwy,
      /     xtwxinv,wkqq1,wkqq2,xi,wkqnm,b,cvgd,oxi,maxits,llvec,
      /     eps,xiecme,g,reject,wkg,wkgg)
@@ -4111,7 +4111,7 @@ C The following subroutines are used by ecmeml().
 C***********************************************************************
 C Algorithm ECME-ML: Finds ML estimates when V_i are known.
       subroutine ecmeml(ntot,subj,m,ist,ifin,occ,nmax,vmax,w,
-     /     vinv,pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,msg,
+     /     vinv,pcol,pred,q,zcol,ztvinv,ztvinvz,iflag,err,msg,
      /     u,iter,sflag,sigma2,p,xcol,beta,y,delta,xtw,xtwx,xtwy,
      /     xtwxinv,wkqq1,wkqq2,xi,wkqnm,b,cvgd,obeta,oxi,maxits,llvec,
      /     eps)

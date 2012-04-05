@@ -1,31 +1,24 @@
-\name{fastmode.lmm}
-\alias{fastmode.lmm}
+\name{fastrml}
+\alias{fastrml}
 \title{
-Rapidly converging algorithm for calculating posterior modes
-in linear mixed models
+Rapidly converging algorithm for restricted maximum-likelihood
+(RML) estimation in linear mixed models
 }
-\description{
-Computes the marginal posterior mode of the variance
-parameters in linear mixed models using a rapidly converging
-procedure described by Schafer (1998), which combines Fisher
-scoring with an ECME algorithm. The method is a minor
-modification of the restricted maximum-likelihood (RML)
-procedure used in "fastrml.lmm". The model is identical to
-that of "fastrml.lmm" with the addition of prior
-distributions for the variance parameters.
 
-For a description of the prior distribution, see the "Details"
-section below.
+\description{
+Computes RML estimates of parameters in linear mixed models
+using the rapidly converging procedure described by Schafer
+(1998), which combines Fisher scoring with an ECME algorithm.
+
+For a description of the model, see the "Details" section
+below. 
 }
 
 \usage{
-fastmode.lmm(y, subj, pred, xcol, zcol, prior, vmax, occ, start,
-   maxits=100, eps=0.0001)
+fastrml(y, subj, pred, xcol, zcol, vmax, occ, start,
+   maxits=50, eps=0.0001)
 }
-
 \arguments{
-Identical to those for the function "fastrml.lmm", with one
-additional required argument:
 \item{y}{
 vector of responses. This is simply the individual yi vectors
 stacked upon one another. Each element of y represents the 
@@ -54,13 +47,6 @@ upon one another.
 vector of integers indicating which columns of pred will be
 used in Zi. That is, pred[,zcol] is the Zi matrices (stacked
 upon one another).
-}
-\item{prior}{
-A list with four components specifying the hyperparameters of
-the prior distribution applied to sigma2 and psi. The
-components must be named "a", "b", "c", and "Dinv". All are
-scalars except for "Dinv", which is a matrix of dimension
-c(length(zcol),length(zcol)).
 }
 \item{vmax}{
 optional matrix of dimension c(max(occ),max(occ)) from which
@@ -96,9 +82,9 @@ matrix of dimension c(length(zcol),length(zcol)), and
 "sigma2" should be a scalar.
 }
 \item{maxits}{
-maximum number of cycles to be performed.
-The algorithm runs to convergence or until "maxits"
-iterations, whichever comes first.
+maximum number of cycles to be performed. The algorithm runs
+to convergence or until "maxits" iterations, whichever comes
+first.
 }
 \item{eps}{
 convergence criterion. The algorithm is considered to have
@@ -112,12 +98,10 @@ a list containing the following components.
 
 \item{beta}{
 vector of same length as "xcol" containing estimated fixed
-effects. This estimate represents the posterior mean for beta,
-conditional upon the estimated values of the variance
-parameters sigma2 and psi.
+effects.
 }
 \item{sigma2}{
-estimate of residual error variance. 
+estimate of residual error variance.
 }
 \item{psi}{
 matrix of dimension c(length(zcol),length(zcol)) containing
@@ -135,53 +119,87 @@ a logical vector of length iter indicating, for each
 iteration, whether the scoring estimates were rejected
 and replaced by ECME estimates (T), or whether the scoring
 estimates were accepted (F). Scoring estimates are rejected
-if they do not increase the log-posterior density.
+if they do not increase the loglikelihood.
 }
-\item{logpost}{
+\item{loglik}{
 vector of length "iter" reporting the value of the
-log-posterior density at each iteration.
+loglikelihood at each iteration.
 }
 \item{cov.beta}{
 matrix of dimension c(length(xcol),length(xcol)) containing
 estimated variances and covariances for elements of "beta".
 These are conventional estimates which regard the variance
-parameters (sigma2 and psi) as fixed at their estimated
-values. 
+parameters (sigma2 and psi) as fixed at their RML estimates.
+}
+\item{b.hat}{
+a matrix with length(zcol) rows and m columns, where
+b.hat[,i] is an empirical Bayes estimate of bi.
+}
+\item{cov.b}{
+an array of dimension length(zcol) by length(zcol) by m,
+where cov.b[,,i] is an empirical Bayes estimate of the
+covariance matrix associated with bi. These are
+conventional estimates which regard the variance
+parameters (sigma2 and psi) as fixed at their RML estimates.
+}
+\item{cov.beta.new}{
+matrix of dimension c(length(xcol),length(xcol)) containing
+estimated variances and covariances for elements of "beta".
+These are improved estimates which account for uncertainty
+in estimating the variance parameters (sigma2 and psi).
+}
+\item{cov.b.new}{
+an array of dimension length(zcol) by length(zcol) by m,
+where cov.b.new[,,i] is an estimated covariance matrix 
+for bi. These are improved estimates which account for
+uncertainty in estimating the variance parameters (sigma2
+and psi).
+}
+\item{cov.b.beta.new}{
+an array of dimension length(zcol) by length(xcol) by m,
+where cov.b.beta.new[,,i] contains the estimated covariances
+bewteen bi and beta. These are improved estimates which account
+for uncertainty in estimating the variance parameters (sigma2
+and psi). Note that conventional estimates which regard
+sigma2 and psi as fixed assume zero covariance between
+each bi and beta.
 }}
 
 \details{
-The algorithm is described in the appendix of Schafer (1998).
-Scoring is carried out on log(sigma2) and the nonredundant
-elements of the inverse of psi/sigma2, taking logs of the
-diagonal elements. Upon convergence, the estimates  represent
-the mode of the joint posterior density of 1/sigma2 and the
-inverse of psi, marginalized (i.e. integrated) over beta.
+A full description of the algorithm is given in Section 3 of
+Schafer (1998). Scoring is carried out on log(sigma2) and the
+nonredundant elements of the inverse of psi/sigma2, taking
+logs of the diagonal elements. Improved estimates of variances
+and covariances are described in Section 4.
 
-The prior distribution applied to the within-unit residual
-variance is scaled inverted-chisquare,
+The model, which is typically applied to longitudinal or
+clustered responses, is 
 
-                sigma2 \eqn{\sim}{~} a / chisq(b),
+	yi = Xi\%*\%beta + Zi\%*\%bi + ei ,    i=1,\dots,m,
 
-where chisq(b) denotes a chisquare random variable with b
-degrees of freedom, and a and b are user-defined
-hyperparameters. Values for the hyperparmeters may be chosen
-by regarding a/b as a rough prior guess for sigma2, and as
-the imaginary degrees of freedom on which this guess is based.
+where
 
-The prior distribution applied to the between-unit covariance
-matrix is inverted Wishart,
+	yi    = (ni x 1) response vector for subject
+		or cluster i;
+	Xi    = (ni x p) matrix of covariates;
+	Zi    =	(ni x q) matrix of covariates;
+	beta  = (p x 1) vector of coefficients common to the
+		population (fixed effects);
+	bi    = (q x 1) vector of coefficients specific to
+		subject or cluster i (random effects); and
+	ei    = (ni x 1) vector of residual errors.
 
-                   psiinv \eqn{\sim}{~} W(c,D),
+The vector bi is assumed to be normally distributed
+with mean zero and unstructured covariance matrix psi, 
 
-where psiinv is the inverse of the between-unit covariance
-matrix psi, and W(c,D) denotes a Wishart distribution with
-degrees of freedom c and scale matrix D. Values for the
-hyperparameters may be chosen by regarding Dinv/c (the inverse
-of D divided by c) as a rough prior guess for psi, and c as
-the imaginary degrees of freedom on which this guess is based.
+        bi \eqn{\sim}{~}  N(0,psi) independently for i=1,\dots,m.
 
-An improper uniform prior density function is applied to
-the fixed effects beta.
+The residual vector ei is assumed to be
+
+        ei \eqn{\sim}{~} N(0,sigma2*Vi)
+
+where Vi is a known (ni x ni) matrix. In most applications,
+Vi is the identity matrix.
 }
 
 \references{
@@ -191,15 +209,15 @@ Association.
 }
 
 \seealso{
-\code{\link[lmm]{ecmeml.lmm}}, \code{\link[lmm]{ecmerml.lmm}},
-\code{\link[lmm]{fastml.lmm}}, \code{\link[lmm]{fastrml.lmm}},
-\code{\link[lmm]{mgibbs.lmm}}, \code{\link[lmm]{fastmcmc.lmm}},
-\code{\link[lmm]{example.lmm}}
+\code{\link[lmm]{ecmeml}}, \code{\link[lmm]{ecmerml}},
+\code{\link[lmm]{fastml}}, \code{\link[lmm]{fastmode}},
+\code{\link[lmm]{mgibbs}}, \code{\link[lmm]{fastmcmc}},
+\code{\link[lmm]{example}}
 }
 
 \examples{
 \dontrun{
-For a detailed example, see the file "example.lmm.R" distributed
+For a detailed example, see the file "example.R" distributed
 with this library.
 
 }}
