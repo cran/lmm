@@ -1,18 +1,32 @@
 \name{example}
 \alias{example}
 \title{
-lmm library example command file
+lmm package example command file
 }
 
 \description{
-These data, taken from an article by Weil, A.T., Zinberg, N.E. and
-Nelson, J.M. (1968; Clinical and psychological effects of marihuana
-in man; Science, 162, 1234-1242), come from a pilot study to
-investigate the clinical and psychological effects of marijuana use
-in human subjects. Nine subjects subjects each received three
-treatments---low-dose, high-dose, and placebo. Under each treatment,
-changes in heart rate (beats per minute) were measured 15 and 90
-minutes after administration. NA denotes a missing value.
+The data as contained in \code{\link[lmm]{marijuana}} is used to fit
+a compound symmetry model iwth a fixed effect for each occasion and
+a random intercept for each subject.
+
+Since the six measurements per subject were not clearly ordered in
+time, instead of a model with time of measurement entered with linear
+(or perhaps higher-order polynomial) effects, the model has an
+intercept and five dummy codes to allow the population means for the
+six occasions to be estimated freely. For a subject i with no missing
+values, the covariate matrices will be
+
+Xi=(
+1 1 0 0 0 0, 
+1 0 1 0 0 0, 
+1 0 0 1 0 0, 
+1 0 0 0 1 0, 
+1 0 0 0 0 1)
+and Zi=(1,1,1,1,1,1)
+
+The Xi's and Zi's are combined into a single matrix called pred
+(Zi is merely the first column of Xi), simply the matrices 
+Xi (i=1,...,9), stacked upon each other.
 }
 
 \seealso{
@@ -24,27 +38,9 @@ minutes after administration. NA denotes a missing value.
 
 \examples{
 ### Model specification ###
-# A compound symmetry model with a fixed effect for each occasion 
-# and a random intercept for each subject for the marijuana data.
-# Since the six measurements per subject were not clearly ordered in
-# time, instead of a model with time of measurement entered with linear
-# (or perhaps higher-order polynomial) effects, the model has an
-# intercept and five dummy codes to allow the population means for
-# the six occasions to be estimated freely. For a subject i with no
-# missing values, the covariate matrices will be
-#
-#                   1 1 0 0 0 0              1
-#                   1 0 1 0 0 0              1
-#           Xi =    1 0 0 1 0 0       Zi =   1
-#                   1 0 0 0 1 0              1
-#                   1 0 0 0 0 1              1
-#                   1 0 0 0 0 0              1
-#
-# The Xi's and Zi's are combined into a single matrix called
-# pred (Zi is merely the first column of Xi), simply the matrices 
-# Xi (i=1,...,9), stacked upon each other.
-#
 data(marijuana)
+# To work only on those with complete data
+marijuana <- subset(marijuana,!is.na(y))
 attach(marijuana)
 pred <- cbind(int,dummy1,dummy2,dummy3,dummy4,dummy5)
 xcol <- 1:6
@@ -93,5 +89,6 @@ fmcmc.result <- fastmcmc(y,subj,pred,xcol,zcol,prior=prior,seed=2345,iter=5000)
 par(mfrow=c(2,1))
 acf(log(gibbs.result$psi.series[1,1,]),lag.max=10, ylim=0:1)
 acf(log(fmcmc.result$psi.series[1,1,]),lag.max=10, ylim=0:1)
+detach(marijuana)
 }
 \keyword{models}

@@ -1,10 +1,22 @@
+Version 0.7
+2013-09-27	Add MIT to LICENSE
+
+Version 0.6
+
+2012-04-16	Change "integer gmax/50/" into "integer gmax, data gmax/50/" in lmm.f
+		as suggested by Brook Milligan [mailto:brook@nmsu.edu]
+2012-04-11	Revise example.Rd
+2012-04-06	Include incomplete data in marijuana.rda
+		Accommodate the change in example.Rd
+2012-04-05	Fix typos and add title to Table 1 in lmm-tr.Rnw
+
 Version 0.5
 
-2012-4-5
-		add argument err to .Fortran calls in functions including
+2012-04-05	Add argument err to .Fortran calls in functions including
 		ecmeml, ecmerml, fastmcmc, fastml, fastrml, mgibbs
 		as suggested by R -d valgrind --vanilla < example.R
-2012-4-4	remove .lmm suffixes to functions
+		To enable LazyData and LazyLoad
+2012-04-04	Remove .lmm suffixes to functions
 		Collect data in example.Rd into marijuana.rda and tabulated in lmm-tr
 
 Version 0.4

@@ -25,22 +25,25 @@
 
 \thispagestyle{empty}
 \section{Maintainer's note}
-One the package is installed, this document can be viewed via {\bf vignette(``lmm-tr'')} from R.
+Once the package is installed, this document can be viewed via {\bf vignette(``lmm-tr'')} from R.
 
-\vskip 0.25cm
+\vskip 0.15cm
 
 The reference should read\footnote{The technical report was originally obtained from 
 \url{http://www.stat.psu.edu/~jls/misoftwa.html}}
 
-\vskip 0.25cm
+\vskip 0.15cm
 
 Schafer, J.L. (1998) Some improved proedures for linear mixed models. Dept. of Statistics, The Pennsylvania State 
 University
 
-\vskip 0.25cm
+\vskip 0.15cm
 
-The marjiuana data as in Table 1 and in the package is reproduced as follows,
+The marijuana data as in Table 1 and in the package is reproduced here,
 
+\begin{table}[h]
+\centering
+\caption{Change in heart rate recorded 15 and 90 minutes after marijuana use, measured in beats per minute above baseline}
 \begin{tabular}{crrr|rrr}
 \\
 \hline
@@ -59,6 +62,9 @@ Subject & Placebo & Low & High & Placebo & Low & High\\
 \hline
 \\
 \end{tabular}
+\end{table}
+
+\vskip 0.15cm
 
 After the package is loaded, one can use {\bf example(example)} to run the example provided or issue 
 {\bf help(example,package=``lmm'')} to see the example code.

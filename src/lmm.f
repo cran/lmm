@@ -549,7 +549,8 @@ C     3 = inadequate information to obtain starting value of xi
 C     4 = value of xi or inv(Ui) became non-pos.def. during iterations
 C     5 = t(X)%*%W%*%X became non-pos.def. during iterations
 C     6 = supplied xihat is non-pos.def.
-      integer gmax/50/
+      integer gmax
+      data gmax/50/
       double precision estarhat(0:50)
       integer ntot,subj(ntot),m,ist(m),ifin(m),occ(ntot),nmax,
      /     pcol,q,zcol(q),iflag,err,msg,iter,p,xcol(p),i,j,
