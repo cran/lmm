@@ -1,6 +1,12 @@
+Version 1.0
+
+2015-02-10	Convert rngs to real function in accordance with pan
+		Cast rangen explicitly as real
+		Revise DESCRIPTION and remove .Rinstignore
+
 Version 0.9
 
-2013-12-10	Change LICENCE following advince from Kurt Hornik
+2013-12-10	Change LICENSE following advince from Kurt Hornik
 
 Version 0.8
 

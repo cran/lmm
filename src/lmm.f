@@ -91,7 +91,7 @@ C(works in layer l)
 C***********************************************************************
 C The following subroutines are used by mgibbs().
 C***********************************************************************
-        function rangen(init)
+        real function rangen(init)
         integer a,p,ix,b15,b16,xhi,xalo,leftflo,fhi,k,init
         data a/16807/,b15/32768/,b16/65536/,p/2147483647/
         save ix
@@ -107,11 +107,11 @@ C***********************************************************************
         return
         end
 C***********************************************************************
-        subroutine rngs(seed)
+        real function rngs(seed)
 C initializes rangen with seed
         integer seed
         real tmp,rangen
-        tmp=rangen(seed)
+        rngs=rangen(seed)
         return
         end
 C***********************************************************************
