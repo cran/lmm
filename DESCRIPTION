@@ -1,16 +1,21 @@
 Package: lmm
-Version: 1.0
-Date: 2015-02-10
+Version: 1.2
+Date: 2018-06-30
 Title: Linear Mixed Models
 Author: Original by Joseph L. Schafer
-Maintainer: Jing hua Zhao <jinghua.zhao@mrc-epid.cam.ac.uk>
+Maintainer: Jing hua Zhao <jinghuazhao@hotmail.com>
 Depends: R (>= 2.0.0)
 LazyData: Yes
 LazyLoad: Yes
-Description: Some improved procedures for linear mixed models.
+Description: It implements Expectation/Conditional Maximization Either (ECME)
+             and rapidly converging algorithms as well as
+             Bayesian inference for linear mixed models, 
+             which is described in Schafer, J.L. (1998)
+             "Some improved procedures for linear mixed models".
+             Dept. of Statistics, The Pennsylvania State University.
 License: Unlimited
-URL: http://www.stat.psu.edu/~jls/misoftwa.html
-Packaged: 2015-02-10 11:21:20 UTC; jhz22
+URL: https://github.com/jinghuazhao/R
+Packaged: 2018-06-30 17:11:36 UTC; jhz22
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-02-10 13:36:04
+Date/Publication: 2018-06-30 21:10:47 UTC

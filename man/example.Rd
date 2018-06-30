@@ -6,7 +6,7 @@ lmm package example command file
 
 \description{
 The data as contained in \code{\link[lmm]{marijuana}} is used to fit
-a compound symmetry model iwth a fixed effect for each occasion and
+a compound symmetry model with a fixed effect for each occasion and
 a random intercept for each subject.
 
 Since the six measurements per subject were not clearly ordered in
