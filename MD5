@@ -1,11 +1,11 @@
-86070e2a5fde3bafc35c0769bf5ce6cd *ChangeLog
-502918c3c5fc43d80bb7bfbb57f45b15 *DESCRIPTION
+797fcded46e70b625853f4636e6e050f *ChangeLog
+502158d200f36bd802c17038b1f81293 *DESCRIPTION
 c5457da0659cc4be66c2832bac699e7d *NAMESPACE
 a1fd0a0a7972979d9131c36516d283d2 *R/lmm.R
-88f06ad2ff2273c83ecd9d29d96ae1f3 *build/vignette.rds
+7f7a167a4b1fa46eac24493ea9a058a2 *build/vignette.rds
 9cbef69b0b2b05020b1bf47926ae452f *data/marijuana.rda
 fd49ede49a269ddb4d099353a20f6416 *inst/doc/lmm-tr.Rnw
-5bfbac7200770b014ac03a7b29c7f8a5 *inst/doc/lmm-tr.pdf
+b4caddd1fe5e9e3d58eadba7b1692546 *inst/doc/lmm-tr.pdf
 307a6df7db23fcdc266da3a7233ca52b *man/ecmeml.Rd
 caa970c9b53adf0417f5f2f454fe65c4 *man/ecmerml.Rd
 5a13050e544aa879b8ea6b0b0755c09a *man/example.Rd
@@ -16,6 +16,6 @@ dda58e12135191d00e09cd88daa69318 *man/fastmcmc.Rd
 42ef38ca4115da743ad3c032b91be324 *man/marijuana.Rd
 28d27b2289130909fe7da9991c3648b8 *man/mgibbs.Rd
 4ed9a186af55ae55143011786c9cd070 *src/lmm.f
-1edb8b2a39bdfb288ed18860bc0e0aaf *src/package_native_routine_registration_skeleton.c
+a890253dbb967259edb1b45721ddc470 *src/package_native_routine_registration_skeleton.c
 0a0980dab7e4f5ddb53ed12a869bef80 *vignettes/improve.pdf
 fd49ede49a269ddb4d099353a20f6416 *vignettes/lmm-tr.Rnw
